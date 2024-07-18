@@ -1,6 +1,7 @@
 import requests
 import hashlib
 import os
+import subprocess
 
 def main():
 
@@ -20,6 +21,14 @@ def main():
         # Save the downloaded VLC installer to disk
         installer_path = save_installer(installer_data)
         print(f'Step 4: VLC installer successfully saved to {installer_path}')
+
+        # Silently run the VLC installer
+        run_installer(installer_path)
+        print(f'Step 5: Installer is running silently...')
+
+        # Delete the VLC installer from disk
+        delete_installer(installer_path)
+        print(f'Step 6: Installer deleted successfully!')
 
 def get_expected_sha256():
     """Downloads the text file containing the expected SHA-256 value for the VLC installer file from the 
@@ -95,6 +104,24 @@ def save_installer(installer_data):
         with open(installer_path, 'wb') as file:
             file.write(installer_data)
         return installer_path
+    
+def run_installer(installer_path):
+    """Silently runs the VLC installer.
+
+    Args:
+        installer_path (str): Full path of the VLC installer file
+    """ 
+    subprocess.run([installer_path, '/L=1033', '/S'], shell=True)
+    return
+
+def delete_installer(installer_path):
+    """Deletes the VLC installer file.
+
+    Args:
+        installer_path (str): Full path of the VLC installer file
+    """
+    os.remove(installer_path)
+    return
 
 if __name__ == '__main__':
     main()
